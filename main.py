@@ -2,9 +2,9 @@ from function import *
 
 
 #Pastas contento os espectrogramas
-caminho_1 = "Spectrogramas\\f1\\fold1"
-caminho_2 = "Spectrogramas\\f2\\fold2"
-caminho_3 = "Spectrogramas\\f3\\fold3"
+caminho_1 = "Spectrogramas/f1/fold1"
+caminho_2 = "Spectrogramas/f2/fold2"
+caminho_3 = "Spectrogramas/f3/fold3"
 
 #Lista de imagens
 Fold1=[]

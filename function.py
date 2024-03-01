@@ -151,7 +151,7 @@ def general_extractor(estilo):
         con_spc_N=normalize_features(con_spc)
 
         #tupla representando as caracteristicas normalizadas da imagem
-        img_carac = (med_spc, ctr_spc, rol_spc, dom_spc, con_spc)
+        img_carac = (med_spc_N, ctr_spc_N, rol_spc_N, dom_spc_N, con_spc_N)
             
         carac_estilo.append(img_carac)
     
@@ -218,9 +218,6 @@ def data_div(X,interv,labels_musicais):
     indices_embaralhados = np.random.permutation(len(X))
     espectrogramas_embaralhados = X[indices_embaralhados]
     labels_embaralhados = labels[indices_embaralhados]
-
-
-    
 
     # Dividir os dados em conjuntos de treinamento e teste (80% para treinamento e 20% para teste)
     X_train, X_test, y_train, y_test = train_test_split(espectrogramas_embaralhados, labels_embaralhados, test_size=0.2, random_state=42)
