@@ -14,6 +14,13 @@ from sklearn.tree import DecisionTreeClassifier
 
 #Acessa os arquivos de um diretório e recuperação das imagens
 def files_access(caminho,diretorio):
+    # check for diretorio + ".npy"
+    if os.path.exists(diretorio + ".npy"):
+        print("--- Retrieving spectrum from file ...")
+        print("Arquivo "+diretorio+".npy"+" encontrado")
+        return np.load(diretorio + ".npy", allow_pickle=True)
+
+    print("--- Retrieving spectrum for the first time ...")
     lst_img = []
 
     for img in os.listdir(caminho):
@@ -30,7 +37,13 @@ def files_access(caminho,diretorio):
     #for img in lst_img:
         #print(img)
         #print(type(img))
+    
+    # salva dados em um arquivo
+    np.save(diretorio + ".npy", lst_img)
+
     return lst_img
+
+    
 
 #Normalização dos espectrogramas
 def normalize_spectrograms(estilo):
@@ -49,40 +62,41 @@ def Style_repartirion(Fold, S1, S2, S3, S4, S5, S6, S7, S8, S9, S10):
    
     for i in range (300):
 
-        if i<=30:
+        if i<30:
             S1.append(Fold[i])
 
-        elif i>30 and i<=60:
+        elif i>=30 and i<60:
             S2.append(Fold[i])
-
-        elif i>60 and i<=90:
+            
+        elif i>=60 and i<90:
             S3.append(Fold[i])
 
-        elif i>90 and i<=120:
+        elif i>=90 and i<120:
             S4.append(Fold[i])
 
-        elif i>120 and i<=150:
+        elif i>=120 and i<150:
             S5.append(Fold[i])
 
-        elif i>150 and i<=180:
+        elif i>=150 and i<180:
             S6.append(Fold[i])
 
-        elif i>180 and i<=210:
+        elif i>=180 and i<210:
             S7.append(Fold[i])
 
-        elif i>210 and i<=240:
+        elif i>=210 and i<240:
             S8.append(Fold[i])
 
-        elif i>240 and i<=270:
+        elif i>=240 and i<270:
             S9.append(Fold[i])
 
-        elif i>270 and i<=300: 
+        elif i>=270 and i<300:
             S10.append(Fold[i])
 
         else:
-            print("Erro na repartição das imagens")
-            
+            print("Erro na repartição dos estilos")
+
     return S1, S2, S3, S4, S5, S6, S7, S8, S9, S10
+            
 
 #=========== Caracteristicas ============
 #Media Espectral (distribuição geral de energia em diferentes partes do espectro)
@@ -123,25 +137,36 @@ def normalize_features(features):
     # Calcule o máximo e o mínimo de cada coluna
     max_values = np.max(features, axis=0)
     min_values = np.min(features, axis=0)
-    
-    # Normalize as características para o intervalo [0, 1]
-    normalized_features = (features - min_values) / (max_values - min_values)
-    
+
+    # Normalizar as características, cuidando com a divisão por zero
+    normalized_features = (features - min_values) / (max_values - min_values + 1e-6)
     return normalized_features
 
 #Extrator Geral
-def general_extractor(estilo):
+counter = 0
+path_to_preprocessed = "/workspaces/Aprendizagem-de-Maq/preprocessed/"
+def general_extractor(estilo, name):
+    # check if txt already exists
+    if os.path.exists(path_to_preprocessed + name + "_carac.txt"):
+        print("Caracteristicas do estilo " + name + " already extracted")
+        return
 
     carac_estilo = []
-   
-    for img in estilo:
+    import time
 
+    # create an empty file to append the features
+    open(path_to_preprocessed + name + "_carac.txt", "w").close()
+    
+    global counter
+    init_time = time.time()
+    for img in estilo:
+        # print("Extraindo caracteristicas da imagem "+str(i))
         #Extração das caracteristicas
-        med_spc = np.array(spectral_mean(img))#media espectral
-        ctr_spc = np.array(spectral_centroid(img, 1))#centroide espectral
-        rol_spc = np.array(spectral_rolloff(img, 0.85))#rollof espectral
-        dom_spc = np.array(dominant_frequency_band(img))#banda de freq dominante
-        con_spc = np.array(spectral_contrast(img))#contraste espectral
+        med_spc = np.array(spectral_mean(img))
+        ctr_spc = np.array(spectral_centroid(img, 1))
+        rol_spc = np.array(spectral_rolloff(img, 0.85))
+        dom_spc = np.array(dominant_frequency_band(img))
+        con_spc = np.array(spectral_contrast(img))
 
         #Normalização das caracteristicas
         med_spc_N=normalize_features(med_spc)
@@ -154,19 +179,19 @@ def general_extractor(estilo):
         img_carac = (med_spc_N, ctr_spc_N, rol_spc_N, dom_spc_N, con_spc_N)
             
         carac_estilo.append(img_carac)
-    
-    
+        # append to the file the features
+        with open(path_to_preprocessed + name + "_carac.txt", "a") as file:
+            # write a marker to identify the start of a new image
+            file.write("img " + str(counter) + "\n")
+            file.write(str(img_carac) + "\n")
+            counter += 1
+
+    print("Tempo de execução: "+str(time.time()-init_time))
+
     return carac_estilo
 
 
-
-
-
-#Pré-processamento
-def preprocess(F1,F2,F3): #Retorna lista com as caracteristicas de cada estilo Normalizado
-
-
-    #Listas para cada estilo
+def repartition(F1, F2, F3):
     S1=[]#1-30
     S2=[]#31-60
     S3=[]#61-90
@@ -178,27 +203,31 @@ def preprocess(F1,F2,F3): #Retorna lista com as caracteristicas de cada estilo N
     S9=[]#241-270
     S10=[]#271-300
 
-   
-    #Repartição dos espectrogramas por 
-    
     Style_repartirion(F1, S1, S2, S3, S4, S5, S6, S7, S8, S9, S10)
     Style_repartirion(F2, S1, S2, S3, S4, S5, S6, S7, S8, S9, S10)
     Style_repartirion(F3, S1, S2, S3, S4, S5, S6, S7, S8, S9, S10)
 
+    return S1, S2, S3, S4, S5, S6, S7, S8, S9, S10
 
-    #Extração das caracteristicas de cada estilo de S1 a S10
-    S1_Norm = general_extractor(S1)
-    S2_Norm = general_extractor(S2)
-    S3_Norm = general_extractor(S3)
-    S4_Norm = general_extractor(S4)
-    S5_Norm = general_extractor(S5)
-    S6_Norm = general_extractor(S6)
-    S7_Norm = general_extractor(S7)
-    S8_Norm = general_extractor(S8)
-    S9_Norm = general_extractor(S9)
-    S10_Norm = general_extractor(S10)
+def extractor(S1, S2, S3, S4, S5, S6, S7, S8, S9, S10):
+    general_extractor(S1, "S1")
+    general_extractor(S2, "S2")
+    general_extractor(S3, "S3")
+    general_extractor(S4, "S4")
+    general_extractor(S5, "S5")
+    general_extractor(S6, "S6")
+    general_extractor(S7, "S7")
+    general_extractor(S8, "S8")
+    general_extractor(S9, "S9")
+    general_extractor(S10, "S10")
 
-    return S1_Norm, S2_Norm, S3_Norm, S4_Norm, S5_Norm, S6_Norm, S7_Norm, S8_Norm, S9_Norm, S10_Norm
+#Pré-processamento
+def preprocess(F1,F2,F3): #Retorna lista com as caracteristicas de cada estilo Normalizado
+    
+    S1, S2, S3, S4, S5, S6, S7, S8, S9, S10 = repartition(F1, F2, F3)
+
+    extractor(S1, S2, S3, S4, S5, S6, S7, S8, S9, S10)
+   
 
 
 #Crição dos labels e divisão dos dados em treino e teste

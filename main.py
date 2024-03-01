@@ -30,24 +30,31 @@ Fold2 = files_access(caminho_2,"fold2")
 Fold3 = files_access(caminho_3,"fold3")
 
 #==== Pré-processamento ====
-S1_N,S2_N,S3_N,S4_N,S5_N,S6_N,S7_N,S8_N,S9_N,S10_N = preprocess(Fold1, Fold2, Fold3)
+print("--- iniciando pré-processamento ---")
+preprocess(Fold1, Fold2, Fold3)
+print("--- fim do pré-processamento ---")
 
 #===== Divisão dos dados em treino e teste ====
 
-X = S1_N+S2_N+S3_N+S4_N+S5_N+S6_N+S7_N+S8_N+S9_N+S10_N
-interv = 90
+# X = S1_N+S2_N+S3_N+S4_N+S5_N+S6_N+S7_N+S8_N+S9_N+S10_N
+# print("X: "+str(len(X)))
+# interv = 90
 
-# Defina os rótulos para os estilos musicais
-labels_musicais = ["Jazz", "Reggae", "Salsa", "Samba", "Tango", "Merengue", "Cumbia", "Bossa Nova", "Mambo", "Bachata"]
+# # Defina os rótulos para os estilos musicais
+# labels_musicais = ["Jazz", "Reggae", "Salsa", "Samba", "Tango", "Merengue", "Cumbia", "Bossa Nova", "Mambo", "Bachata"]
 
-# Divida os dados em treino e teste
-Espc_train, Espc_test, Lab_train, Lab_test = data_div(X,interv,labels_musicais)
+# # Divida os dados em treino e teste
+# Espc_train, Espc_test, Lab_train, Lab_test = data_div(X,interv,labels_musicais)
+
+# print("Espc_train: "+str(len(Espc_train)))
+# print("Espc_test: "+str(len(Espc_test)))
+# print("Lab_train: "+str(len(Lab_train)))
 
 
 #==== Treinamento e Teste ====
 
-Trein_knn(Espc_train, Espc_test, Lab_train, Lab_test)
-Trein_svm(Espc_train, Espc_test, Lab_train, Lab_test)
-Trein_arvore(Espc_train, Espc_test, Lab_train, Lab_test)
+# Trein_knn(Espc_train, Espc_test, Lab_train, Lab_test)
+# Trein_svm(Espc_train, Espc_test, Lab_train, Lab_test)
+# Trein_arvore(Espc_train, Espc_test, Lab_train, Lab_test)
 
 
