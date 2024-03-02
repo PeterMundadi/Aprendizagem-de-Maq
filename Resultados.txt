@@ -1,0 +1,25 @@
+--- Retrieving spectrum from file ...
+Arquivo fold1.npy encontrado
+--- Retrieving spectrum from file ...
+Arquivo fold2.npy encontrado
+--- Retrieving spectrum from file ...
+Arquivo fold3.npy encontrado
+--- iniciando pré-processamento ---
+Tempo de execução: 12.469562530517578
+Tempo de execução: 12.325814247131348
+Tempo de execução: 11.876086711883545
+Tempo de execução: 11.43612265586853
+Tempo de execução: 11.890213012695312
+Tempo de execução: 11.626753091812134
+Tempo de execução: 11.769203424453735
+Tempo de execução: 11.222426891326904
+Tempo de execução: 12.017169952392578
+Tempo de execução: 13.409383296966553
+--- fim do pré-processamento ---
+--- iniciando treinamento ---
+Precisão do classificador KNN: 60.00%
+Precisão do classificador SVM: 80.56%
+Precisão do classificador Arvore: 56.67%
+Precisão do classificador Naive Bayes: 45.00%
+Precisão do classificador Random Forest: 67.22%
+--- fim do treinamento ---
